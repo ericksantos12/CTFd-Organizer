@@ -54,7 +54,7 @@ Os arquivos devem ser renomeados para os nomes `challenges.csv`, `users.csv` e `
 
 1. Execute o programa
 ```bash
-python main.py
+python app.py
 ```
 
 Ao executar o programa, . O arquivo resultante será salvo na pasta `result` no diretório do projeto.
