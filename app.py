@@ -63,3 +63,12 @@ def manipulator():
     
     # Packing in reverse order
     package.update({'pivot': df_pivot[::-1]})
+def writer():
+    console.print('[yellow][Writer][/] Writing to Excel')
+    
+    output_path = path.abspath('./result/')
+    
+    if not path.exists(output_path):
+        mkdir(output_path)
+        
+    package.get('pivot').to_excel(path.join(output_path, 'output.xlsx'))
