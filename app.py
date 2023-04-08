@@ -3,6 +3,8 @@ from os import mkdir, path
 import pandas as pd
 from rich.console import Console
 from rich.prompt import Confirm, Prompt
+from rich.traceback import install
+install()
 
 console = Console()
 
@@ -13,19 +15,33 @@ def start():
     reader()
     manipulator()
     writer()
-
+    
 def input():
-    console.print('[yellow bold]Enter the corresponding path')
+
+    console.print('[red bold]Make sure the files are in "./csv" folder')
     
-    challenges_path = path.abspath(Prompt.ask('[blue]Challenges[/] CSV file'))
-    users_path = path.abspath(Prompt.ask('[blue]Users[/] CSV file'))
-    solves_path = path.abspath(Prompt.ask('[blue]Solves[/] CSV file'))
-    
+    challenges_path = path.abspath('./csv/challenges.csv')
+    users_path = path.abspath('./csv/users.csv')
+    solves_path = path.abspath('./csv/solves.csv')
+
     confirm = Confirm.ask('Do you want to continue? Output file will be overwritten', default=True)
     
+    if not path.exists(challenges_path):
+        console.print('[red bold]Challenges not found')
+        confirm = False
+    if not path.exists(users_path):
+        console.print('[red bold]Users not found')
+        confirm = False
+    if not path.exists(solves_path):
+        console.print('[red bold]Solves not found')
+        confirm = False
+        
+        
     if confirm == False:
         exit()
+
     
+    console.print("[green]Starting...[/]")
     package.update({'challenges_path': challenges_path, 'users_path': users_path, 'solves_path': solves_path})
 
 def reader():
@@ -83,3 +99,4 @@ def writer():
 
 if __name__ == '__main__':
     start()
+    console.print('[green]Done[/]')
