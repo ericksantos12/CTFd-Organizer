@@ -21,3 +21,18 @@ def input():
         exit()
     
     package.update({'challenges_path': challenges_path, 'users_path': users_path, 'solves_path': solves_path})
+
+def reader():
+    # Reading CSV into Dataframe
+    console.print('[yellow][Reader][/] Reading CSV files')
+    df_solves = pd.read_csv(package.get('solves_path'), usecols=['challenge_id', 'user_id', 'type'])
+    df_challenges = pd.read_csv(package.get('challenges_path'), usecols=['id', 'name'])
+    df_users = pd.read_csv(package.get('users_path'), usecols=['id', 'name'])
+    
+    # Renaming Columns
+    df_challenges = df_challenges.rename(columns={'id': 'challenge_id', 'name': 'challenge_name'})
+    df_users = df_users.rename(columns={'id': 'user_id', 'name': 'user_name'})
+    
+    
+    # Packing dataframes
+    package.update({'solves': df_solves, 'challenges': df_challenges, 'users': df_users})
