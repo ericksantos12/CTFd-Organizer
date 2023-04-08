@@ -36,3 +36,30 @@ def reader():
     
     # Packing dataframes
     package.update({'solves': df_solves, 'challenges': df_challenges, 'users': df_users})
+
+def manipulator():
+     
+    # Merging Dataframes
+    console.print('[yellow][Manipulator][/] Merging Dataframes')
+    df_merged = pd.merge(package.get('solves'), package.get('challenges'), on='challenge_id')
+    df_merged = pd.merge(df_merged, package.get('users'), on='user_id')
+    
+    # Dropping column ids
+    df_merged.drop(['challenge_id', 'user_id'], axis=1, inplace=True)
+   
+   
+    # Replacing values
+    df_merged = df_merged.replace('correct', True)
+    
+    
+    # Pivotting Dataframes
+    console.print('[yellow][Manipulator][/] Pivotting Dataframes')
+    df_pivot = df_merged.pivot(values='type', index='user_name', columns='challenge_name').fillna(False)
+    
+    
+    # Reindexing Columns
+    change_columns = package.get('challenges')['challenge_name'].values.tolist()
+    df_pivot = df_pivot.reindex(columns=change_columns)
+    
+    # Packing in reverse order
+    package.update({'pivot': df_pivot[::-1]})
