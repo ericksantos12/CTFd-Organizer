@@ -3,7 +3,7 @@
  <img width=200px height=200px src="https://i.imgur.com/6wj0hh6.jpg" alt="Project logo"></a>
 </p> -->
 
-<h1 align="center">🚩 CTF Organizer</h1>
+<h1 align="center">🚩 CTFd Organizer</h1>
 
 <div align='center'>
   <img width=800 src=https://files.catbox.moe/megb4g.gif>
@@ -73,4 +73,5 @@ Do you want to continue? Output file will be overwritten [y/n] (y):
 
 ## ✍️ Authors
 
-- [@ericksantos12](https://github.com/ericksantos12)
+- [@michaelsantosti](https://github.com/michaelsantosti) - Idea
+- [@ericksantos12](https://github.com/ericksantos12) - Code & Documentation
