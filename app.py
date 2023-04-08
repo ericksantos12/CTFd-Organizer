@@ -8,6 +8,12 @@ console = Console()
 
 package = {}
 
+def start():
+    input()
+    reader()
+    manipulator()
+    writer()
+
 def input():
     console.print('[yellow bold]Enter the corresponding path')
     
@@ -63,6 +69,8 @@ def manipulator():
     
     # Packing in reverse order
     package.update({'pivot': df_pivot[::-1]})
+    
+
 def writer():
     console.print('[yellow][Writer][/] Writing to Excel')
     
@@ -72,3 +80,6 @@ def writer():
         mkdir(output_path)
         
     package.get('pivot').to_excel(path.join(output_path, 'output.xlsx'))
+
+if __name__ == '__main__':
+    start()
