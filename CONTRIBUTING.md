@@ -16,11 +16,11 @@
   - Use one branch per fix / feature
 - Commit your changes
   - Please provide a git message that explains what you've done
-  - Please make sure your commits follow the [gitmoji convention](https://github.com/carloscuesta/gitmoji)
+  - Please make sure your commits follow the [gitmoji convention](https://gitmoji.dev)
   - Commit to the forked repository
   - Example:
     ````
-    $ git commit -am 'Add some fooBar'
+    $ git commit -am ':emoji: Add some fooBar'
     ````
 - Push to the branch
   - Example:
