@@ -5,6 +5,14 @@
 
 <h1 align="center">🚩 CTFd Organizer</h1>
 
+<div align="center">
+
+  [![Status](https://img.shields.io/badge/status-active-success.svg)]() 
+  [![GitHub Issues](https://img.shields.io/github/issues/ericksantos12/CTF-Organizer.svg)](https://github.com/ericksantos12/CTF-Organizer/issues)
+  [![GitHub Pull Requests](https://img.shields.io/github/issues-pr/ericksantos12/CTF-Organizer.svg)](https://github.com/ericksantos12/CTF-Organizer/pulls)
+  [![Gitmoji](https://img.shields.io/badge/gitmoji-%20😜%20😍-FFDD67.svg?style=flat-square)](https://gitmoji.dev)
+</div>
+
 <div align='center'>
   <img width=800 src=https://files.catbox.moe/megb4g.gif>
 </div>
