@@ -64,10 +64,9 @@ def manipulator():
     # Merging Dataframes
     console.print('[yellow][Manipulator][/] Merging Dataframes')
     df_merged = pd.merge(package.get('solves'), package.get('challenges'), on='challenge_id')
-    print(df_merged)
+
     df_merged = pd.merge(df_merged, package.get('users'), how='right', on='user_id')
-    print(df_merged)
-    
+
     # Dropping column ids
     df_merged.drop(['challenge_id', 'user_id'], axis=1, inplace=True)
    
