@@ -45,12 +45,12 @@ Este programa requer a instalação de algumas bibliotecas Python. Siga as instr
 
 1. Clone o repositório em seu computador
 ```bash
-git clone https://github.com/ericksantos12/CTF-Organizer.git
+git clone https://github.com/ericksantos12/CTFd-Organizer.git
 ```
 
 2. Acesse o diretório e instale as dependencias necessárias
 ```bash
-cd CTF-Organizer
+cd CTFd-Organizer
 pip install -r requirements.txt
 ```
 
