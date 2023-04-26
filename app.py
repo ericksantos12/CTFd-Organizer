@@ -49,7 +49,7 @@ def reader():
     console.print('[yellow][Reader][/] Reading CSV files')
     df_solves = pd.read_csv(package.get('solves_path'), usecols=['challenge_id', 'user_id', 'type'])
     df_challenges = pd.read_csv(package.get('challenges_path'), usecols=['id', 'name'])
-    df_users = pd.read_csv(package.get('users_path'), usecols=['id', 'name'])
+    df_users = pd.read_csv(package.get('users_path'), usecols=['id', 'name', 'affiliation'])
     
     # Renaming Columns
     df_challenges = df_challenges.rename(columns={'id': 'challenge_id', 'name': 'challenge_name'})
@@ -77,7 +77,7 @@ def manipulator():
     
     # Pivotting Dataframes
     console.print('[yellow][Manipulator][/] Pivotting Dataframes')
-    df_pivot = df_merged.pivot(values='type', index='user_name', columns='challenge_name').fillna(False)
+    df_pivot = df_merged.pivot(values='type', index=['user_name', 'affiliation'], columns='challenge_name').fillna(False)
     
     
     # Reindexing Columns
