@@ -7,14 +7,15 @@
 
 <div align="center">
 
-  [![Status](https://img.shields.io/badge/status-active-success.svg)]() 
-  [![GitHub Issues](https://img.shields.io/github/issues/ericksantos12/CTF-Organizer.svg)](https://github.com/ericksantos12/CTF-Organizer/issues)
-  [![GitHub Pull Requests](https://img.shields.io/github/issues-pr/ericksantos12/CTF-Organizer.svg)](https://github.com/ericksantos12/CTF-Organizer/pulls)
-  [![Gitmoji](https://img.shields.io/badge/gitmoji-%20😜%20😍-FFDD67.svg?style=flat-square)](https://gitmoji.dev)
+  [![Last Commit](https://img.shields.io/github/last-commit/ericksantos12/CTFd-Organizer?style=for-the-badge&color=cba6f7&logoColor=D9E0EE&labelColor=302D41)](https://github.com/ericksantos12/CTFd-Organizer/commits/main)
+  [![Stars](https://img.shields.io/github/stars/ericksantos12/CTFd-Organizer?style=for-the-badge&color=f38ba8&logoColor=D9E0EE&labelColor=302D41)](https://github.com/ericksantos12/CTFd-Organizer/stargazers)
+  [![License](https://img.shields.io/github/license/ericksantos12/CTFd-Organizer?style=for-the-badge&color=a6e3a1&logoColor=D9E0EE&labelColor=302D41)](https://github.com/ericksantos12/CTFd-Organizer/blob/main/LICENSE)
+  [![GitHub Issues](https://img.shields.io/github/issues/ericksantos12/CTF-Organizer.svg?style=for-the-badge&color=94e2d5&logoColor=D9E0EE&labelColor=302D41)](https://github.com/ericksantos12/CTF-Organizer/issues)
+  [![Gitmoji](https://img.shields.io/badge/gitmoji-%20😜%20😍-FFDD67.svg?style=for-the-badge&color=f9e2af&logoColor=D9E0EE&labelColor=302D41)](https://gitmoji.dev)
 </div>
 
 <div align='center'>
-  <img width=800 src=https://files.catbox.moe/megb4g.gif>
+  <img width=800 src=https://files.catbox.moe/qwyed8.gif>
 </div>
 
 ## 📝 Table of Contents
