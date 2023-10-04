@@ -1,6 +1,7 @@
 from os import mkdir, path
 
 import pandas as pd
+from xlsxwriter import Workbook
 from rich.console import Console
 from rich.prompt import Confirm, Prompt
 from rich.traceback import install
@@ -13,8 +14,9 @@ package = {}
 def start():
     input()
     reader()
-    manipulator()
-    writer()
+    merger()
+    solve_sorter()
+    excel_writer()
     
 def input():
 
@@ -47,7 +49,7 @@ def input():
 def reader():
     # Reading CSV into Dataframe
     console.print('[yellow][Reader][/] Reading CSV files')
-    df_solves = pd.read_csv(package.get('solves_path'), usecols=['challenge_id', 'user_id', 'type'])
+    df_solves = pd.read_csv(package.get('solves_path'), usecols=['challenge_id', 'user_id', 'type', 'date'])
     df_challenges = pd.read_csv(package.get('challenges_path'), usecols=['id', 'name'])
     df_users = pd.read_csv(package.get('users_path'), usecols=['id', 'name', 'affiliation'])
     
@@ -59,10 +61,10 @@ def reader():
     # Packing dataframes
     package.update({'solves': df_solves, 'challenges': df_challenges, 'users': df_users})
 
-def manipulator():
+def merger():
      
     # Merging Dataframes
-    console.print('[yellow][Manipulator][/] Merging Dataframes')
+    console.print('[yellow][Merger][/] Merging Dataframes')
     df_merged = pd.merge(package.get('solves'), package.get('challenges'), on='challenge_id')
 
     df_merged = pd.merge(df_merged, package.get('users'), how='right', on='user_id')
@@ -76,7 +78,7 @@ def manipulator():
     
     
     # Pivotting Dataframes
-    console.print('[yellow][Manipulator][/] Pivotting Dataframes')
+    console.print('[yellow][Merger][/] Pivotting Dataframes')
     df_pivot = df_merged.pivot(values='type', index=['user_name', 'affiliation'], columns='challenge_name').fillna(False)
     
     
@@ -87,8 +89,25 @@ def manipulator():
     # Packing in reverse order
     package.update({'pivot': df_pivot[::-1]})
     
-
-def writer():
+def solve_sorter():
+    console.print('[yellow][Sorter][/] Sorting Dataframes by date')
+    
+    df = pd.merge(package.get('solves'), package.get('challenges'), on='challenge_id')
+    df = pd.merge(df, package.get('users'), on='user_id')
+        
+    df["date"] = pd.to_datetime(df["date"])
+    
+    df.drop(['challenge_id', 'user_id', 'type'], axis=1, inplace=True)
+    df = df.reset_index(drop=True)
+       
+    columns = ['challenge_name', 'affiliation', 'user_name', 'date']
+    
+    df = df[columns].sort_values(by='date')
+    
+    package.update({'sorted_solves': df})
+    
+    
+def excel_writer():
     console.print('[yellow][Writer][/] Writing to Excel')
     
     output_path = path.abspath('./result/')
@@ -96,7 +115,11 @@ def writer():
     if not path.exists(output_path):
         mkdir(output_path)
         
-    package.get('pivot').to_excel(path.join(output_path, 'output.xlsx'))
+    writer = pd.ExcelWriter(path.join(output_path, 'output.xlsx'), engine='xlsxwriter')
+    
+    package.get('pivot').to_excel(writer, sheet_name='pivot')
+    package.get('sorted_solves').to_excel(writer, sheet_name='sorted_solves', index=False)
+    writer.close()
 
 if __name__ == '__main__':
     start()
