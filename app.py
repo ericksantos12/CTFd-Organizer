@@ -12,7 +12,12 @@ console = Console()
 package = {}
 
 def start():
-    input()
+    try:
+        input()
+    except Exception as e:
+        console.print('[red bold]Error:', e)
+        exit()
+        
     reader()
     merger()
     solve_sorter()
@@ -29,20 +34,13 @@ def input():
     confirm = Confirm.ask('Do you want to continue? Output file will be overwritten', default=True)
     
     if not path.exists(challenges_path):
-        console.print('[red bold]Challenges not found')
-        confirm = False
-    if not path.exists(users_path):
-        console.print('[red bold]Users not found')
-        confirm = False
-    if not path.exists(solves_path):
-        console.print('[red bold]Solves not found')
-        confirm = False
-        
-        
-    if confirm == False:
-        exit()
-
+        raise FileNotFoundError('Challenges not found')
     
+    if not path.exists(users_path):
+        raise FileNotFoundError('Users not found')
+    
+    if not path.exists(solves_path):
+        raise FileNotFoundError('Solves not found')
     console.print("[green]Starting...[/]")
     package.update({'challenges_path': challenges_path, 'users_path': users_path, 'solves_path': solves_path})
 
