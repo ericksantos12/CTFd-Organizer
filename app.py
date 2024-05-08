@@ -91,7 +91,9 @@ def merger():
     # Pivotting Dataframes
     console.print('[yellow][Merger][/] Pivotting Dataframes')
     try:
-        df_pivot = df_merged.pivot(values='type', index=['user_name', 'affiliation'], columns='challenge_name').fillna(False)
+        with pd.option_context('future.no_silent_downcasting', True):
+            df_pivot = df_merged.pivot(values='type', index=['user_name', 'affiliation'], columns='challenge_name').fillna(False)
+            
     except ValueError as e:
         console.print('[red bold]Error:', "Duplicate values found in the csv files")
         exit()
@@ -117,7 +119,7 @@ def solve_sorter():
     df = pd.merge(df, package.get('users'), on='user_id')
         
     # Convert the 'date' column to datetime format
-    df["date"] = pd.to_datetime(df["date"])
+    df["date"] = pd.to_datetime(df["date"], format='mixed')
     
     # Drop unnecessary columns from the dataframe
     df.drop(['challenge_id', 'user_id', 'type'], axis=1, inplace=True)
