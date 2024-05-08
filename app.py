@@ -90,7 +90,11 @@ def merger():
 
     # Pivotting Dataframes
     console.print('[yellow][Merger][/] Pivotting Dataframes')
-    df_pivot = df_merged.pivot(values='type', index=['user_name', 'affiliation'], columns='challenge_name').fillna(False)
+    try:
+        df_pivot = df_merged.pivot(values='type', index=['user_name', 'affiliation'], columns='challenge_name').fillna(False)
+    except ValueError as e:
+        console.print('[red bold]Error:', "Duplicate values found in the csv files")
+        exit()
 
     # Reindexing Columns
     change_columns = package.get('challenges')['challenge_name'].values.tolist()
