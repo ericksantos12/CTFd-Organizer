@@ -5,6 +5,7 @@ from xlsxwriter import Workbook
 from rich.console import Console
 from rich.prompt import Confirm, Prompt
 from rich.traceback import install
+from xlsxwriter.utility import xl_col_to_name
 install()
 
 console = Console()
@@ -112,6 +113,9 @@ def merger():
     # Reindexing Columns
     change_columns = package.get('challenges')['challenge_name'].values.tolist()
     df_pivot = df_pivot.reindex(columns=change_columns)
+    
+    # Renaming index levels
+    df_pivot = df_pivot.rename_axis(['RM', 'Nome'])
 
     # Packing in reverse order
     package.update({'pivot': df_pivot[::-1]})
@@ -145,7 +149,6 @@ def solve_sorter():
     # Update the package with the sorted dataframe
     package.update({'sorted_solves': df})
     
-    
 def excel_writer():
     """
     Writes data to an Excel file.
@@ -170,8 +173,141 @@ def excel_writer():
     # Write the 'sorted_solves' dataframe to the 'sorted_solves' sheet of the Excel file, without including the index
     package.get('sorted_solves').to_excel(writer, sheet_name='sorted_solves', index=False)
     
-    # Close the writer object to save the Excel file
+    # Print a message indicating that we are formatting the spreadsheet
+    console.print('[yellow][Writer][/] Pretty formatting')
+    
+    workbook = writer.book
+    worksheet_main = writer.sheets['pivot']
+    
+    # Get the dimensions of the dataframe
+    (num_rows, num_cols) = package.get('pivot').shape
+    
+    # Get the headers from the dataframe and add 'Nota' and 'Peso'
+    headers = [{'header': name} for name in package.get('pivot').reset_index().columns] + [{'header': 'Nota'}, {'header': 'Peso'}]
+    
+    # Create a table including 'Nota' and 'Peso' columns
+    worksheet_main.add_table(0, 0, num_rows, num_cols + 3, {'columns': headers})
+    
+    # Autofit columns for 'pivot' sheet
+    df_pivot_reset = package.get('pivot').reset_index()
+    for i, col in enumerate(df_pivot_reset.columns):
+        # Find the maximum length of the column header and the data
+        column_len = max(df_pivot_reset[col].astype(str).map(len).max(), len(col))
+        # Set the column width with a little padding
+        worksheet_main.set_column(i, i, column_len + 10)
+
+    # Create formats
+    header_format = workbook.add_format({'bold': True, 'align': 'center', 'valign': 'vcenter'})
+    white_format = workbook.add_format({'bg_color': 'white', 'align': 'center', 'valign': 'vcenter'})
+    white_format_border = workbook.add_format({'bg_color': 'white', 'align': 'center', 'valign': 'vcenter', 'top': 1, 'bottom': 1, 'top_color': 'blue', 'bottom_color': 'blue'})
+
+    # Center and bold the header row
+    worksheet_main.set_row(0, None, header_format)
+
+    # Apply white_format only to the data rows inside the table (skip header)
+    worksheet_main.conditional_format(
+        1, 0,
+        num_rows, 1,
+        {
+            'type':      'no_errors',
+            'format':    white_format_border
+        }
+    )
+    
+    # Define custom formats matching Excel's "Good" and "Bad" styles
+    good_fmt = workbook.add_format({
+        'bg_color': '#C6EFCE',
+        'font_color': '#006100',
+        'align': 'center',
+        'valign': 'vcenter',
+        'top': 1, 
+        'bottom': 1, 
+        'top_color': 'blue', 
+        'bottom_color': 'blue'
+    })
+    bad_fmt = workbook.add_format({
+        'bg_color': '#FFC7CE',
+        'font_color': '#9C0006',
+        'align': 'center',
+        'valign': 'vcenter',
+        'top': 1, 
+        'bottom': 1, 
+        'top_color': 'blue', 
+        'bottom_color': 'blue'
+    })
+
+    # Apply conditional formatting from the 3rd column onward
+    start_row, start_col = 1, 2
+    end_row, end_col = num_rows, num_cols + 1
+
+    # VERDADEIRO → Good style
+    worksheet_main.conditional_format(
+        start_row, start_col, end_row, end_col,
+        {
+            'type': 'text',
+            'criteria': 'containing',
+            'value': 'VERDADEIRO',
+            'format': good_fmt
+        }
+    )
+
+    # FALSO → Bad style
+    worksheet_main.conditional_format(
+        start_row, start_col, end_row, end_col,
+        {
+            'type': 'text',
+            'criteria': 'containing',
+            'value': 'FALSO',
+            'format': bad_fmt
+        }
+    )
+    
+    # Determine the columns where we'll write Nota and Peso
+    nota_col = num_cols + 2     # zero‐based index of “Nota”
+    peso_col = num_cols + 3     # zero‐based index of “Peso”
+
+    # Write the headers for the two new columns (already defined in the table)
+    worksheet_main.write(0, nota_col, 'Nota', header_format)
+    worksheet_main.write(0, peso_col, 'Peso', header_format)
+    
+    worksheet_main.conditional_format(
+        1, nota_col,
+        num_rows, peso_col,
+        {
+            'type':      'no_errors',
+            'format':    white_format
+        }
+    )
+
+    # Put the Peso value in the first data row (only one row)
+    peso_val = 20
+    worksheet_main.write(1, peso_col, peso_val)
+    
+    # Build a COUNTIF formula for each row to compute Nota = (count of VERDADEIRO)*Peso/20
+    first_data_col = 2                # first challenge column (zero‐based)
+    last_data_col = num_cols + 1      # last challenge column (zero‐based)
+    for row in range(1, num_rows + 1):
+        # convert to A1‐style
+        start_cell = xl_col_to_name(first_data_col) + str(row + 1)
+        end_cell   = xl_col_to_name(last_data_col)   + str(row + 1)
+        peso_ref   = xl_col_to_name(peso_col)        + '$2'
+        formula = (
+            f"=COUNTIF({start_cell}:{end_cell},\"VERDADEIRO\")"
+            f"*{peso_ref}/20"
+        )
+        worksheet_main.write_formula(row, nota_col, formula)
+
+    # Apply a data‐bar conditional format to the “Nota” column
+    worksheet_main.conditional_format(
+        1, nota_col, num_rows, nota_col,
+        {
+            'type': 'data_bar',
+            'bar_color': '#008AEF'
+        }
+    )
+    
     writer.close()
+
 
 if __name__ == '__main__':
     start()
