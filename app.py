@@ -3,7 +3,7 @@ from os import mkdir, path
 import pandas as pd
 from xlsxwriter import Workbook
 from rich.console import Console
-from rich.prompt import Confirm
+from rich.prompt import Confirm, Prompt
 from rich.traceback import install
 install()
 
@@ -13,7 +13,7 @@ package = {}
 
 def start():
     try:
-        input()
+        get_user_input()
     except Exception as e:
         console.print('[red bold]Error:', e)
         exit()
@@ -23,7 +23,7 @@ def start():
     solve_sorter()
     excel_writer()
     
-def input():
+def get_user_input():
     """
     This function prompts the user for input and sets the paths for the CSV files.
     """
@@ -35,8 +35,10 @@ def input():
     users_path = path.abspath('./csv/users.csv')
     solves_path = path.abspath('./csv/solves.csv')
 
+    challenge_filter = Prompt.ask('Get only visible (v), hidden (h), or all (a) challenges?', choices=["v", "h", "a"], default="a")
+
     # Confirm if the user wants to continue
-    confirm = Confirm.ask('Do you want to continue? Output file will be overwritten', default=True)
+    Confirm.ask('Do you want to continue? Output file will be overwritten', default=True)
     
     # Check if the challenges file exists
     if not path.exists(challenges_path):
@@ -51,7 +53,7 @@ def input():
         raise FileNotFoundError('Solves not found')
             
     console.print("[green]Starting...[/]")
-    package.update({'challenges_path': challenges_path, 'users_path': users_path, 'solves_path': solves_path})
+    package.update({'challenges_path': challenges_path, 'users_path': users_path, 'solves_path': solves_path, 'challenge_filter': challenge_filter})
 
 def reader():
     """
@@ -61,8 +63,17 @@ def reader():
     # Reading CSV into Dataframe
     console.print('[yellow][Reader][/] Reading CSV files')
     df_solves = pd.read_csv(package.get('solves_path'), usecols=['challenge_id', 'user_id', 'type', 'date'])
-    df_challenges = pd.read_csv(package.get('challenges_path'), usecols=['id', 'name'])
+    df_challenges = pd.read_csv(package.get('challenges_path'), usecols=['id', 'name', 'state'])
     df_users = pd.read_csv(package.get('users_path'), usecols=['id', 'name', 'affiliation'])
+    
+    # Filter challenges based on challenge_filter
+    challenge_filter = package.get('challenge_filter')
+    if challenge_filter == 'h':
+        df_challenges = df_challenges[df_challenges['state'] == 'hidden']
+        console.print('[yellow][Reader][/] Filtered to show only hidden challenges')
+    elif challenge_filter == 'v':
+        df_challenges = df_challenges[df_challenges['state'] == 'visible']
+        console.print('[yellow][Reader][/] Filtered to show only visible challenges')
     
     # Renaming Columns
     df_challenges = df_challenges.rename(columns={'id': 'challenge_id', 'name': 'challenge_name'})
