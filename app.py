@@ -244,9 +244,9 @@ def excel_writer():
     worksheet_main.conditional_format(
         start_row, start_col, end_row, end_col,
         {
-            'type': 'text',
-            'criteria': 'containing',
-            'value': 'VERDADEIRO',
+            'type': 'cell',
+            'criteria': '==',
+            'value': 'TRUE',
             'format': good_fmt
         }
     )
@@ -255,9 +255,9 @@ def excel_writer():
     worksheet_main.conditional_format(
         start_row, start_col, end_row, end_col,
         {
-            'type': 'text',
-            'criteria': 'containing',
-            'value': 'FALSO',
+            'type': 'cell',
+            'criteria': '==',
+            'value': 'FALSE',
             'format': bad_fmt
         }
     )
@@ -292,7 +292,7 @@ def excel_writer():
         end_cell   = xl_col_to_name(last_data_col)   + str(row + 1)
         peso_ref   = xl_col_to_name(peso_col)        + '$2'
         formula = (
-            f"=COUNTIF({start_cell}:{end_cell},\"VERDADEIRO\")"
+            f"=COUNTIF({start_cell}:{end_cell},TRUE)"
             f"*{peso_ref}/20"
         )
         worksheet_main.write_formula(row, nota_col, formula)
